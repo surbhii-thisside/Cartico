@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
+import { motion } from "framer-motion";
+import ScannerPage from "./pages/ScannerPage";
+import ProductAnalysisPage from "./pages/ProductAnalysisPage";
 
 const MKT_ITEMS = [
   {t:'price',text:'₹ 285',r:true},{t:'price',text:'₹ 249'},{t:'price',text:'₹ 99',r:true},
@@ -11,7 +14,7 @@ const MKT_ITEMS = [
   {t:'badge',text:'Fraud Detected',r:true},{t:'badge',text:'Scan Complete',g:true},
   {t:'save',text:'You Save ₹ 36'},{t:'save',text:'Save ₹ 120 Online'},
   {t:'save',text:'Best Value: 500g'},{t:'save',text:'₹ 840 Saved'},
-  {t:'rupee',text:'₹'},{t:'rupee',text:'₹'},{t:'rupee',text:'₹'},
+  {t:'rupee',text:'₹'},{t:'rupee',text:'₹'},{t:'rupee',text:'₹'}, 
   {t:'pct',text:'14%'},{t:'pct',text:'28%'},{t:'pct',text:'OFF'},
   {t:'icon',text:'🛒'},{t:'icon',text:'🏷️'},{t:'icon',text:'📦'},
   {t:'icon',text:'🧾'},{t:'icon',text:'💰'},{t:'icon',text:'🔍'},
@@ -266,7 +269,7 @@ function Navbar({activeTab,setActiveTab}) {
     <nav>
       <div className="logo">Cartico</div>
       <div className="nav-links">
-        {['Home','Scanner','Results','Reviews','Alerts','Compare','Dashboard'].map(tab=>(
+        {['Home','Scanner','Results','Compare','Dashboard'].map(tab=>(
           <a key={tab} className={`nav-link${activeTab===tab?' active':''}`} onClick={()=>setActiveTab(tab)}>{tab}</a>
         ))}
       </div>
@@ -311,35 +314,49 @@ function Home({setActiveTab}) {
         </div>
       </div>
 
-      <div className="section">
+      <motion.div className="section"
+        initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}}
+        transition={{duration:0.6,ease:'easeOut'}} viewport={{once:true,amount:0.1}}>
         <div className="sh">
           <div className="stag">Real Scan Results</div>
           <h2>See Cartico in Action</h2>
           <p>Hover over any product card to see what Cartico reveals</p>
         </div>
         <div className="tilt-grid">
-          {PRODUCTS.map((p,i)=><TiltCard key={i} p={p}/>)}
+          {PRODUCTS.map((p,i)=>(
+            <motion.div key={i}
+              initial={{opacity:0,y:28}} whileInView={{opacity:1,y:0}}
+              transition={{duration:0.45,delay:i*0.07,ease:'easeOut'}} viewport={{once:true,amount:0.1}}>
+              <TiltCard p={p}/>
+            </motion.div>
+          ))}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="counters-section">
+      <motion.div className="counters-section"
+        initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}}
+        transition={{duration:0.6,ease:'easeOut'}} viewport={{once:true,amount:0.2}}>
         <div className="counter-grid">
           {[
             {label:'Products Scanned',target:12847,suffix:'+',icon:'📱'},
             {label:'Frauds Detected',target:3241,suffix:'+',icon:'🚨'},
             {label:'Money Saved',target:840000,prefix:'₹',suffix:'+',icon:'💰'},
             {label:'Cities Active',target:48,suffix:'+',icon:'🏙️'},
-          ].map(c=>(
-            <div key={c.label} className="counter-card">
+          ].map((c,i)=>(
+            <motion.div key={c.label} className="counter-card"
+              initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}}
+              transition={{duration:0.4,delay:i*0.1,ease:'easeOut'}} viewport={{once:true,amount:0.3}}>
               <div className="counter-icon">{c.icon}</div>
               <div className="counter-num"><Counter target={c.target} prefix={c.prefix||''} suffix={c.suffix}/></div>
               <div className="counter-lbl">{c.label}</div>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="section">
+      <motion.div className="section"
+        initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}}
+        transition={{duration:0.6,ease:'easeOut'}} viewport={{once:true,amount:0.15}}>
         <div className="sh">
           <div className="stag">Simple Process</div>
           <h2>How Cartico Works</h2>
@@ -350,38 +367,50 @@ function Home({setActiveTab}) {
             {n:1,icon:'📱',glow:'green',title:'Scan the Product',desc:'Point your camera at any QR or barcode, or search by product name'},
             {n:2,icon:'🤖',glow:'blue',title:'Cartico Analyzes',desc:'AI checks price, expiry, health score and finds better alternatives instantly'},
             {n:3,icon:'✅',glow:'purple',title:'Shop with Truth',desc:'Make informed choices — never overpay or buy unsafe products again'},
-          ].map(s=>(
-            <div key={s.n} className="step">
+          ].map((s,i)=>(
+            <motion.div key={s.n} className="step"
+              initial={{opacity:0,y:24}} whileInView={{opacity:1,y:0}}
+              transition={{duration:0.45,delay:i*0.12,ease:'easeOut'}} viewport={{once:true,amount:0.3}}>
               <div className={`step-icon-wrap step-glow-${s.glow}`}>
                 <div className="step-icon">{s.icon}</div>
               </div>
               <div className="step-n">{s.n}</div>
               <h3>{s.title}</h3>
               <p>{s.desc}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="section">
+      <motion.div className="section"
+        initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}}
+        transition={{duration:0.6,ease:'easeOut'}} viewport={{once:true,amount:0.1}}>
         <div className="sh">
           <div className="stag">What We Reveal</div>
           <h2>Every Secret, Uncovered</h2>
           <p>Click any card to reveal what Cartico detects!</p>
         </div>
         <div className="feat-grid">
-          {FLIP_CARDS.map((card,i)=><FlipCard key={i} card={card}/>)}
+          {FLIP_CARDS.map((card,i)=>(
+            <motion.div key={i}
+              initial={{opacity:0,scale:0.93,y:18}} whileInView={{opacity:1,scale:1,y:0}}
+              transition={{duration:0.4,delay:i*0.08,ease:'easeOut'}} viewport={{once:true,amount:0.2}}>
+              <FlipCard card={card}/>
+            </motion.div>
+          ))}
         </div>
-      </div>
+      </motion.div>
 
-      <div className="section">
+      <motion.div className="section"
+        initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}}
+        transition={{duration:0.6,ease:'easeOut'}} viewport={{once:true,amount:0.15}}>
         <div className="sh">
           <div className="stag">Live Preview</div>
           <h2>What Cartico Reveals</h2>
           <p>Real scan results — slide through to explore each feature.</p>
         </div>
         <ResultSlider/>
-      </div>
+      </motion.div>
 
       <footer>
         <div className="footer-logo">Cartico</div>
@@ -419,10 +448,8 @@ export default function App() {
       <div className="content">
         <Navbar activeTab={activeTab} setActiveTab={setActiveTab}/>
         {activeTab==='Home'&&<Home setActiveTab={setActiveTab}/>}
-        {activeTab==='Scanner'&&<ComingSoon name="Scanner"/>}
-        {activeTab==='Results'&&<ComingSoon name="Results"/>}
-        {activeTab==='Reviews'&&<ComingSoon name="Reviews"/>}
-        {activeTab==='Alerts'&&<ComingSoon name="Alerts"/>}
+        {activeTab==='Scanner'&&<ScannerPage onBack={()=>setActiveTab('Home')}/>}
+        {activeTab==='Results'&&<ProductAnalysisPage onBack={()=>setActiveTab('Home')}/>}
         {activeTab==='Compare'&&<ComingSoon name="Compare"/>}
         {activeTab==='Dashboard'&&<ComingSoon name="Dashboard"/>}
       </div>
