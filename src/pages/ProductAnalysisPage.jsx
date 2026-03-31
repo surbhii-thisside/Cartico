@@ -170,7 +170,13 @@ export default function ProductAnalysisPage({ onBack }) {
     return () => clearTimeout(t);
   }, []);
 
-  if (loading) return <div className="ap-page"><SkeletonScreen /></div>;
+  if (loading) return (
+    <div className="ap-page page-results" style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <SkeletonScreen />
+      </div>
+    </div>
+  );
 
   const isFraud = product.mrpSticker > product.mrpActual;
   const filteredReviews = product.reviews.items.filter(
@@ -182,7 +188,9 @@ export default function ProductAnalysisPage({ onBack }) {
   const total     = Math.max(filteredReviews.length, 1);
 
   return (
-    <div className="ap-page">
+    <div className="ap-page page-results" style={{ position: 'relative' }}>
+      {/* ── All page content — sits above canvas ── */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
       {/* ── Sticky back bar ── */}
       <div className="ap-bar">
         <motion.button className="ap-back" onClick={onBack} whileTap={{ scale:0.95 }}>
@@ -420,6 +428,7 @@ export default function ProductAnalysisPage({ onBack }) {
         </motion.div>
 
       </motion.div>
+      </div>{/* end content z-index wrapper */}
     </div>
   );
 }

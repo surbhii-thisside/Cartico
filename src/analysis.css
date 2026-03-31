@@ -18,24 +18,27 @@
 /* ── Page ────────────────────────────────────────────── */
 .ap-page {
   min-height: 100vh;
-  background: var(--bg);
-  font-family: 'Inter', sans-serif;
+  /* Background is transparent — CoalesceParticles canvas renders behind */
+  background: transparent;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
   color: #fff;
 }
 
 /* ── Sticky header bar ───────────────────────────────── */
 .ap-bar {
-  position: fixed; top:0; left:0; right:0; z-index: 50;
+  position: fixed; top:68px; left:0; right:0; z-index: 50;
   display: flex; align-items: center;
-  padding: 14px 20px;
-  background: rgba(3,8,24,0.82);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 12px 24px;
+  background: rgba(10,18,18,0.8);
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  border-bottom: 1px solid rgba(16,185,129,0.12);
 }
 .ap-bar-title {
   flex: 1; text-align: center;
-  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
-  background: linear-gradient(135deg, var(--em-l), var(--blue-l));
+  font-family: 'Orbitron', 'Syne', sans-serif; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.18rem; text-transform: uppercase;
+  background: linear-gradient(135deg, var(--em-l), #52d3a0);
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -54,16 +57,19 @@
 .ap-body {
   max-width: 680px;
   margin: 0 auto;
-  padding: 84px 20px 80px;
+  /* extra top pad: main nav (68px) + analysis bar (~52px) */
+  padding: 130px 20px 80px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* ── Glass card ──────────────────────────────────────── */
+/* ── Glass card — frosted over Coalesce canvas ───────── */
 .ap-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(10, 22, 18, 0.72);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  border: 1px solid rgba(16, 185, 129, 0.12);
   border-radius: 20px;
   padding: 20px;
   position: relative;
@@ -71,12 +77,13 @@
   transition: box-shadow 0.25s, transform 0.2s;
 }
 .ap-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 40px rgba(16,185,129,0.07);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 48px rgba(16,185,129,0.12);
+  border-color: rgba(16, 185, 129, 0.2);
 }
 .ap-card::before {
   content:''; position:absolute; top:0; left:0; right:0; height:1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+  background: linear-gradient(90deg, transparent, rgba(16,185,129,0.18), transparent);
 }
 
 /* ── Section label ───────────────────────────────────── */
@@ -106,13 +113,14 @@
   font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
   line-height: 1.15; margin-bottom: 4px;
 }
-.ap-prod-brand { font-size: 13px; color: rgba(255,255,255,0.38); margin-bottom: 8px; }
+.ap-prod-brand { font-size: 13px; color: rgba(255,255,255,0.38); margin-bottom: 8px; font-family: 'Plus Jakarta Sans', sans-serif; }
 .ap-mrp-badge {
   display: inline-block;
-  background: rgba(77,159,255,0.1);
-  border: 1px solid rgba(77,159,255,0.22);
-  color: var(--blue-l);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: var(--em-l);
   font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 /* ── Trust Gauge ─────────────────────────────────────── */
@@ -238,12 +246,12 @@
   display: flex; align-items: center; gap: 5px;
   font-size: 11px; font-weight: 600; padding: 5px 13px;
   border-radius: 20px; cursor: pointer; transition: all 0.2s;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 .ap-city-btn.active {
-  background: rgba(77,159,255,0.14);
-  border: 1px solid rgba(77,159,255,0.32);
-  color: var(--blue-l);
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.32);
+  color: var(--em-l);
 }
 .ap-city-btn.inactive {
   background: rgba(255,255,255,0.04);
@@ -304,14 +312,14 @@
 /* ── CTA Button ──────────────────────────────────────── */
 .ap-cta {
   width: 100%; padding: 16px;
-  background: linear-gradient(135deg, var(--em-l), #00cc88);
-  color: #000; font-family: 'Syne', sans-serif;
-  font-size: 15px; font-weight: 800;
+  background: linear-gradient(135deg, #10b981, #34d399, #00cc88);
+  color: #000; font-family: 'Orbitron', 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.08rem;
   border: none; border-radius: 18px; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, transform 0.2s;
 }
-.ap-cta:hover { box-shadow: 0 12px 32px rgba(16,185,129,0.28); }
+.ap-cta:hover { box-shadow: 0 16px 40px rgba(16,185,129,0.32); transform: translateY(-2px); }
 
 /* ── Empty state ─────────────────────────────────────── */
 .ap-empty {
