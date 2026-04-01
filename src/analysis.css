@@ -151,7 +151,7 @@
 }
 .ap-price-card.ok:hover { box-shadow: 0 16px 40px rgba(16,185,129,0.1); }
 
-.ap-price-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ap-price-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .ap-price-col { display: flex; flex-direction: column; gap: 4px; }
 .ap-price-tiny { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); }
 .ap-price-num {

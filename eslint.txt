@@ -1,0 +1,14 @@
+﻿
+C:\Users\user\Desktop\cartico\src\pages\ComparePage.jsx
+   1:1   error  Definition for rule 'react/prop-types' was not found                           react/prop-types
+   2:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  43:1   error  Definition for rule 'react/prop-types' was not found                           react/prop-types
+
+C:\Users\user\Desktop\cartico\src\pages\DashboardPage.jsx
+   1:1   error  Definition for rule 'react/prop-types' was not found                           react/prop-types
+   3:10  error  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
+  29:1   error  Definition for rule 'react/prop-types' was not found                           react/prop-types
+  30:41  error  'onBack' is defined but never used                                             no-unused-vars
+
+Γ£û 7 problems (7 errors, 0 warnings)
+

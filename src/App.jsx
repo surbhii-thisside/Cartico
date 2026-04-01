@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import "./App.css";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import ScannerPage from "./pages/ScannerPage";
 import ProductAnalysisPage from "./pages/ProductAnalysisPage";
+import DashboardPage from "./pages/DashboardPage";
+import ComparePage from "./pages/ComparePage";
+import AuthPage from "./pages/AuthPage";
 import CoalesceParticles from "./components/CoalesceParticles";
 import DataStreamBg from "./components/DataStreamBg";
 
@@ -354,22 +358,53 @@ function ResultSlider() {
 /* ─────────────────────────────────────────────────────────────
    NAVBAR — Orbitron, gap: 4rem spread
 ───────────────────────────────────────────────────────────── */
-function Navbar({ activeTab, setActiveTab }) {
+function Navbar({ activeTab, setActiveTab, isLoggedIn }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleNavClick = (tab) => {
+    setActiveTab(tab);
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <nav>
-      <div className="logo">Cartico</div>
-      <div className="nav-links">
-        {['Home', 'Scanner', 'Results', 'Compare', 'Dashboard'].map(tab => (
-          <a
-            key={tab}
-            className={`nav-link${activeTab === tab ? ' active' : ''}`}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
-          </a>
-        ))}
+      <div className="logo" onClick={() => handleNavClick('Home')} style={{ cursor: 'pointer' }}>Cartico</div>
+      
+      <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        {isMobileMenuOpen ? <X size={24} color="#fff" /> : <Menu size={24} color="#fff" />}
+      </button>
+
+      <div className={`nav-menu ${isMobileMenuOpen ? 'open' : ''}`}>
+        <div className="nav-links">
+          {['Home', 'Scanner', 'Results', 'Compare', 'Dashboard'].map(tab => (
+            <a
+              key={tab}
+              className={`nav-link${activeTab === tab ? ' active' : ''}`}
+              onClick={() => handleNavClick(tab)}
+            >
+              {tab}
+            </a>
+          ))}
+        </div>
+        <div className="nav-actions" style={{ display: 'flex', gap: 16, alignItems: 'center', flexShrink: 0 }}>
+          {!isLoggedIn ? (
+            <button className="nav-cta" onClick={() => handleNavClick('Auth')}>Login / Join</button>
+          ) : (
+            <>
+              <button className="nav-cta" onClick={() => handleNavClick('Scanner')}>⊡ Scan Now</button>
+              <div 
+                className="nav-avatar" 
+                onClick={() => handleNavClick('Dashboard')}
+                style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg, var(--green), var(--blue))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000', cursor: 'pointer', border: '2px solid rgba(255,255,255,0.1)', transition: 'transform 0.2s', boxShadow: '0 4px 12px rgba(0,255,170,0.2)' }}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                C
+              </div>
+            </>
+          )}
+        </div>
       </div>
-      <button className="nav-cta" onClick={() => setActiveTab('Scanner')}>⊡ Scan Now</button>
     </nav>
   );
 }
@@ -451,8 +486,8 @@ function Home({ setActiveTab }) {
       <MistReveal className="section">
         <div className="sh">
           <MistReveal as="div" delay={0.06}><div className="stag">Real Scan Results</div></MistReveal>
-          <MistReveal as="h2" delay={0.14}><h2>See Cartico in Action</h2></MistReveal>
-          <MistReveal as="p" delay={0.20}><p>Hover over any product card to see what Cartico reveals</p></MistReveal>
+          <MistReveal as="h2" delay={0.14}>See Cartico in Action</MistReveal>
+          <MistReveal as="p" delay={0.20}>Hover over any product card to see what Cartico reveals</MistReveal>
         </div>
         <div className="tilt-grid">
           {PRODUCTS.map((p, i) => (
@@ -467,16 +502,17 @@ function Home({ setActiveTab }) {
       <div className="counters-section">
         <div className="counter-grid">
           {[
-            {label:'Products Scanned',target:12847,suffix:'+',icon:'📱'},
-            {label:'Frauds Detected',target:3241,suffix:'+',icon:'🚨'},
-            {label:'Money Saved',target:840000,prefix:'₹',suffix:'+',icon:'💰'},
-            {label:'Cities Active',target:48,suffix:'+',icon:'🏙️'},
+            {label:'Products Scanned',target:12,suffix:'+',icon:'📱'},
+            {label:'Frauds Detected',target:3,suffix:'+',icon:'🚨'},
+            {label:'Money Saved',target:450,prefix:'₹',suffix:'+',icon:'💰'},
+            {label:'Cities Active',target:2,suffix:'+',icon:'🏙️', sublabel:'(Faridabad & Delhi)'},
           ].map((c, i) => (
             <MistReveal key={c.label} delay={i * 0.10}>
               <div className="counter-card">
                 <div className="counter-icon">{c.icon}</div>
                 <div className="counter-num"><Counter target={c.target} prefix={c.prefix || ''} suffix={c.suffix} /></div>
                 <div className="counter-lbl">{c.label}</div>
+                {c.sublabel && <div className="counter-sublbl">{c.sublabel}</div>}
               </div>
             </MistReveal>
           ))}
@@ -487,8 +523,8 @@ function Home({ setActiveTab }) {
       <MistReveal className="section">
         <div className="sh">
           <MistReveal delay={0.06}><div className="stag">Simple Process</div></MistReveal>
-          <MistReveal as="h2" delay={0.14}><h2>How Cartico Works</h2></MistReveal>
-          <MistReveal as="p" delay={0.20}><p>Three steps. Zero guesswork. Full transparency.</p></MistReveal>
+          <MistReveal as="h2" delay={0.14}>How Cartico Works</MistReveal>
+          <MistReveal as="p" delay={0.20}>Three steps. Zero guesswork. Full transparency.</MistReveal>
         </div>
         <div className="steps">
           {[
@@ -514,8 +550,8 @@ function Home({ setActiveTab }) {
       <MistReveal className="section">
         <div className="sh">
           <MistReveal delay={0.06}><div className="stag">What We Reveal</div></MistReveal>
-          <MistReveal as="h2" delay={0.14}><h2>Every Secret, Uncovered</h2></MistReveal>
-          <MistReveal as="p" delay={0.20}><p>Click any card to reveal what Cartico detects!</p></MistReveal>
+          <MistReveal as="h2" delay={0.14}>Every Secret, Uncovered</MistReveal>
+          <MistReveal as="p" delay={0.20}>Click any card to reveal what Cartico detects!</MistReveal>
         </div>
         <div className="feat-grid">
           {FLIP_CARDS.map((card, i) => (
@@ -530,8 +566,8 @@ function Home({ setActiveTab }) {
       <MistReveal className="section">
         <div className="sh">
           <MistReveal delay={0.06}><div className="stag">Live Preview</div></MistReveal>
-          <MistReveal as="h2" delay={0.14}><h2>What Cartico Reveals</h2></MistReveal>
-          <MistReveal as="p" delay={0.20}><p>Real scan results — slide through to explore each feature.</p></MistReveal>
+          <MistReveal as="h2" delay={0.14}>What Cartico Reveals</MistReveal>
+          <MistReveal as="p" delay={0.20}>Real scan results — slide through to explore each feature.</MistReveal>
         </div>
         <ResultSlider />
       </MistReveal>
@@ -650,6 +686,7 @@ function ComingSoon({ name }) {
 ───────────────────────────────────────────────────────────── */
 export default function App() {
   const [activeTab, setActiveTab] = useState('Home');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Custom cursor
   useEffect(() => {
@@ -674,7 +711,7 @@ export default function App() {
       <div id="cursor-trail" />
 
       <div className="content">
-        <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Navbar activeTab={activeTab} setActiveTab={setActiveTab} isLoggedIn={isLoggedIn} />
 
         {/* Global Backgrounds wrapper — decoupled from page transitions so position: fixed works */}
         <div style={{ position: 'fixed', inset: 0, zIndex: -1, pointerEvents: 'none' }}>
@@ -713,13 +750,19 @@ export default function App() {
 
           {activeTab === 'Compare' && (
             <motion.div key="compare" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-              <ComingSoon name="Compare" />
+              <ComparePage onBack={() => setActiveTab('Home')} />
             </motion.div>
           )}
 
           {activeTab === 'Dashboard' && (
             <motion.div key="dashboard" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-              <ComingSoon name="Dashboard" />
+              <DashboardPage onBack={() => setActiveTab('Home')} />
+            </motion.div>
+          )}
+
+          {activeTab === 'Auth' && (
+            <motion.div key="auth" variants={pageVariants} initial="initial" animate="animate" exit="exit">
+              <AuthPage onLogin={() => { setIsLoggedIn(true); setActiveTab('Home'); }} />
             </motion.div>
           )}
         </AnimatePresence>
