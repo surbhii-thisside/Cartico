@@ -368,12 +368,17 @@ function Navbar({ activeTab, setActiveTab, isLoggedIn }) {
 
   return (
     <nav>
-      <div className="logo" onClick={() => handleNavClick('Home')} style={{ cursor: 'pointer' }}>Cartico</div>
-      
+      {/* 1. Left Section: Logo */}
+      <div className="nav-section nav-left">
+        <div className="logo" onClick={() => handleNavClick('Home')} style={{ cursor: 'pointer' }}>Cartico</div>
+      </div>
+
+      {/* Mobile Toggle (only shows on mobile via CSS) */}
       <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
         {isMobileMenuOpen ? <X size={24} color="#fff" /> : <Menu size={24} color="#fff" />}
       </button>
 
+      {/* 2. Center Section: Links (Desktop) / Full Overlay (Mobile) */}
       <div className={`nav-menu ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="nav-links">
           {['Home', 'Scanner', 'Results', 'Compare', 'Dashboard'].map(tab => (
@@ -386,24 +391,44 @@ function Navbar({ activeTab, setActiveTab, isLoggedIn }) {
             </a>
           ))}
         </div>
-        <div className="nav-actions" style={{ display: 'flex', gap: 16, alignItems: 'center', flexShrink: 0 }}>
+        
+        {/* Actions inside nav-menu for mobile fallback */}
+        <div className="nav-actions-mobile">
           {!isLoggedIn ? (
             <button className="nav-cta" onClick={() => handleNavClick('Auth')}>Login / Join</button>
           ) : (
-            <>
+            <div style={{ display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'center' }}>
               <button className="nav-cta" onClick={() => handleNavClick('Scanner')}>⊡ Scan Now</button>
               <div 
                 className="nav-avatar" 
                 onClick={() => handleNavClick('Dashboard')}
-                style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg, var(--green), var(--blue))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000', cursor: 'pointer', border: '2px solid rgba(255,255,255,0.1)', transition: 'transform 0.2s', boxShadow: '0 4px 12px rgba(0,255,170,0.2)' }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, var(--green), var(--blue))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)' }}
               >
                 C
               </div>
-            </>
+            </div>
           )}
         </div>
+      </div>
+
+      {/* 3. Right Section: Actions (Desktop) */}
+      <div className="nav-section nav-right">
+        {!isLoggedIn ? (
+          <button className="nav-cta" onClick={() => handleNavClick('Auth')}>Login / Join</button>
+        ) : (
+          <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexShrink: 0 }}>
+            <button className="nav-cta" onClick={() => handleNavClick('Scanner')}>⊡ Scan Now</button>
+            <div 
+              className="nav-avatar" 
+              onClick={() => handleNavClick('Dashboard')}
+              style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg, var(--green), var(--blue))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000', cursor: 'pointer', border: '2px solid rgba(255,255,255,0.1)', transition: 'transform 0.2s', boxShadow: '0 4px 12px rgba(0,255,170,0.2)' }}
+              onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              C
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );

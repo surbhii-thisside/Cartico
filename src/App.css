@@ -79,38 +79,75 @@ body {
 /* ═══════════════════════════════════════════════════════════
    NAVIGATION — Orbitron + Wide Spacing
 ═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION — Refined Centering + Technical Typography
+ ═══════════════════════════════════════════════════════════ */
 nav {
   position:fixed; top:0; left:0; right:0; z-index:100;
-  padding:0 3vw;  /* use viewport width for better responsive scaling */
-  height:68px;
-  display:flex; align-items:center; justify-content:space-between;
-  background:rgba(6,4,18,0.72);
-  backdrop-filter:blur(28px) saturate(1.4);
-  -webkit-backdrop-filter:blur(28px) saturate(1.4);
-  border-bottom:1px solid rgba(255,255,255,0.07);
-  gap: 16px; /* slightly tighter base gap */
+  padding:0 3vw;
+  height:72px;
+  display:flex; align-items:center;
+  background:rgba(6,4,18,0.85);
+  backdrop-filter:blur(24px) saturate(1.4);
+  -webkit-backdrop-filter:blur(24px) saturate(1.4);
+  border-bottom:1px solid rgba(255,255,255,0.08);
 }
 
+.nav-section {
+  display: flex;
+  align-items: center;
+  flex: 1; /* Balanced sides for perfect centering */
+}
+.nav-left { justify-content: flex-start; }
+.nav-right { justify-content: flex-end; }
+
 .logo {
-  font-family:'Orbitron', 'Syne', sans-serif;
-  font-size: clamp(16px, 2.5vw, 20px); /* responsive text size */
+  font-family:'Orbitron', sans-serif;
+  font-size: 20px;
   font-weight:800;
   background:linear-gradient(135deg, var(--green), var(--blue));
   -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  letter-spacing:0.12rem;
-  flex-shrink:0;
+  letter-spacing:0.15rem;
 }
 
-/* Nav Menu Container */
+/* Nav Menu Container (Center Desktop / Overlay Mobile) */
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 4rem; /* Desktop gap between links and actions */
+  justify-content: center;
 }
 
-/* Nav links — spread across remaining space with large gap */
 .nav-links {
-  display:flex; gap:4rem; align-items:center;
+  display:flex;
+  gap:1.5rem;
+  align-items:center;
+}
+
+.nav-link {
+  text-transform: uppercase;
+  font-family: 'Orbitron', 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.nav-link.active {
+  color: var(--green);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid var(--green);
+  box-shadow: 0 4px 12px rgba(0, 255, 170, 0.12);
 }
 
 .mobile-menu-btn {
@@ -121,28 +158,27 @@ nav {
   z-index: 105;
 }
 
-@media (max-width: 900px) {
-  .mobile-menu-btn {
-    display: block;
-  }
+/* Hide desktop actions in nav-menu, only for mobile menu overlay */
+.nav-actions-mobile { display: none; }
+
+@media (max-width: 1024px) {
+  .nav-right { display: none; }
+  .mobile-menu-btn { display: block; }
   
   .nav-menu {
     position: fixed;
-    top: 68px; /* Below navbar */
-    left: 0;
-    right: 0;
+    top: 72px; left: 0; right: 0;
     flex-direction: column;
-    background: rgba(6,4,18,0.95);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
-    padding: 32px 24px;
+    background: rgba(6,4,18,0.98);
+    backdrop-filter: blur(32px);
+    padding: 40px 24px;
     gap: 32px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
     transform: translateY(-150%);
     opacity: 0;
     pointer-events: none;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
   }
   
   .nav-menu.open {
@@ -153,21 +189,20 @@ nav {
   
   .nav-links {
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
     width: 100%;
   }
   
   .nav-link {
-    font-size: 1.1rem;
-    padding: 12px;
+    font-size: 13px;
     width: 100%;
     text-align: center;
   }
   
-  .nav-actions {
+  .nav-actions-mobile {
+    display: block;
     width: 100%;
-    justify-content: center;
-    padding-top: 24px;
+    padding-top: 32px;
     border-top: 1px solid rgba(255,255,255,0.05);
   }
 }
@@ -403,7 +438,15 @@ nav {
 /* ═══════════════════════════════════════════════════════════
    FLIP CARDS
 ═══════════════════════════════════════════════════════════ */
-.feat-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; }
+.feat-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; }
+
+@media (max-width: 1100px) {
+  .feat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .feat-grid { grid-template-columns: 1fr; }
+}
 .flip-wrap  { perspective:1000px; cursor:pointer; height:220px; }
 .flip-inner { position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform 0.6s cubic-bezier(0.4,0,0.2,1); }
 .flip-wrap.flipped .flip-inner { transform:rotateY(180deg); }

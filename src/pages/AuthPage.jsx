@@ -58,7 +58,7 @@ export default function AuthPage({ onLogin }) {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
             >
-              {isLogin ? "Welcome Back, Chief." : "Join the Cartico Elite."}
+              {isLogin ? "Welcome Back, Dear." : "Join the Cartico Elite."}
             </motion.h2>
           </AnimatePresence>
           <AnimatePresence mode="wait">
