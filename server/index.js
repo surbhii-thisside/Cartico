@@ -73,3 +73,5 @@ app.post('/api/products', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ Cartico server running on http://localhost:${PORT}`);
 });
+
+// Step 2 complete: MongoDB Atlas connected 
