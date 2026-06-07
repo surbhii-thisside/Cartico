@@ -162,5 +162,3 @@ node index.js
 GitHub: [@surbhii-thisside](https://github.com/surbhii-thisside)
 
 ---
-
-*Built with 💚 — a real-world full stack project.*
