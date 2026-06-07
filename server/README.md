@@ -1,145 +1,144 @@
-# Cartico — Backend API
+# Cartico 🔍
 
-> **"Brands Have Secrets, Cartico Has Answers"**  
-> A QR/barcode-based product authenticity and trust verification platform for Indian consumers.
+> **"Brands Have Secrets, Cartico Has Answers"**
 
----
+Cartico is a QR/barcode-based product authenticity and trust verification platform built for Indian consumers. Scan any product, get instant truth.
 
-## 🚀 Live
-
-| Layer | URL |
-|-------|-----|
-| Frontend | [cartico-theta.vercel.app](https://cartico-theta.vercel.app) |
-| Backend | Coming soon on Render |
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![React](https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=flat&logo=mongodb&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
 
 ---
 
-## 🧠 What is Cartico?
+## 🌐 Live Demo
 
-Cartico helps Indian consumers verify whether a product is genuine before buying it. Users can scan a QR code or barcode on any product and instantly get:
+**Frontend:** [cartico-theta.vercel.app](https://cartico-theta.vercel.app)  
+**Backend API:** Coming soon on Render
 
-- ✅ Product authenticity status
-- 📊 Trust score based on brand data
-- 🧪 Ingredient breakdown and health score
-- 🔍 Side-by-side product comparison
-- 📁 Personal scan history dashboard
+---
+
+## 💡 What Does Cartico Do?
+
+Indian consumers often fall victim to fake products, misleading discounts, and hidden ingredients. Cartico solves this by letting users:
+
+- 📷 **Scan** any product's QR code or barcode
+- ✅ **Verify** product authenticity instantly
+- 📊 **View** trust score, health score, and ingredient breakdown
+- 🔍 **Compare** two products side by side
+- 📁 **Track** personal scan history on their dashboard
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Backend
-| Tool | Purpose |
-|------|---------|
-| Node.js | Runtime environment |
-| Express.js | Web server framework |
-| MongoDB Atlas | Cloud database (free tier) |
-| Mongoose | MongoDB object modeling |
-| JSON Web Token (JWT) | User authentication |
-| bcryptjs | Password hashing |
-| dotenv | Environment variable management |
-| CORS | Cross-origin request handling |
+### Frontend
+| Technology | Purpose |
+|-----------|---------|
+| React.js | UI framework |
+| Tailwind CSS | Styling |
+| Framer Motion | Animations |
+| Axios | API requests |
+| Vercel | Deployment |
 
-### Frontend (separate repo)
-- React.js, Tailwind CSS, Framer Motion, Axios
-- Deployed on **Vercel**
+### Backend
+| Technology | Purpose |
+|-----------|---------|
+| Node.js | Runtime environment |
+| Express.js | Server framework |
+| MongoDB Atlas | Cloud database |
+| Mongoose | Database modeling |
+| JWT | Authentication |
+| bcryptjs | Password hashing |
+| Render | Deployment |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-server/
-├── index.js          # Entry point — Express app setup
-├── .env              # Environment variables (not committed)
-├── package.json      # Dependencies
-└── node_modules/     # Installed packages
+Cartico/
+├── public/               # Static assets
+├── server/               # Backend (Node.js + Express)
+│   ├── index.js          # Server entry point
+│   ├── .env              # Environment variables (not committed)
+│   ├── package.json      # Backend dependencies
+│   └── README.md         # Backend documentation
+├── src/                  # Frontend (React)
+│   ├── assets/           # Images and icons
+│   ├── components/       # Reusable UI components
+│   ├── pages/            # Application pages
+│   │   ├── AuthPage.jsx          # Login / Signup
+│   │   ├── ScannerPage.jsx       # QR / Barcode scanner
+│   │   ├── ProductAnalysisPage.jsx # Product details & trust score
+│   │   ├── ComparePage.jsx       # Compare two products
+│   │   └── DashboardPage.jsx     # User scan history
+│   ├── App.jsx
+│   └── main.jsx
+├── index.html
+├── package.json
+├── tailwind.config.js
+└── vite.config.js
 ```
-
-> **Note:** Full MVC folder structure (routes/, models/, controllers/, middleware/) will be added as development progresses.
-
----
-
-## 🗄️ Database Collections (MongoDB)
-
-| Collection | Purpose |
-|------------|---------|
-| `users` | Stores registered user accounts |
-| `products` | Stores product data linked to barcodes/QR codes |
-| `scan_history` | Tracks each user's scanned products |
 
 ---
 
 ## 🔌 API Routes
 
-### Auth
-| Method | Route | Description |
-|--------|-------|-------------|
-| POST | `/api/auth/register` | Register a new user |
-| POST | `/api/auth/login` | Login and receive JWT token |
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/login` | Login and get JWT token |
 
 ### Products
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/api/product/:id` | Get product details by barcode/ID |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/product/:id` | Get product by barcode/ID |
 | GET | `/api/product/compare?ids=x,y` | Compare two products |
-| POST | `/api/products` | Add a new product (admin) |
+| POST | `/api/products` | Add new product |
 
 ### Dashboard
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/api/dashboard/:userId` | Get user's scan history and saved items |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/dashboard/:userId` | Get user scan history |
 
 ---
 
-## ⚙️ Setup & Installation
+## ⚙️ Local Setup
 
 ### Prerequisites
 - Node.js v18+
-- MongoDB Atlas account (free)
+- MongoDB Atlas account
 
-### Steps
+### Frontend
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/surbhii-thisside/Cartico.git
-
-# 2. Navigate to server folder
-cd Cartico/server
-
-# 3. Install dependencies
+cd Cartico
 npm install
-
-# 4. Create .env file
-touch .env
+npm run dev
 ```
 
-Add the following to your `.env` file:
+### Backend
+
+```bash
+cd server
+npm install
+```
+
+Create a `.env` file inside `server/`:
 
 ```env
 PORT=5000
-MONGODB_URI=your_mongodb_connection_string_here
-JWT_SECRET=your_jwt_secret_here
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
 ```
 
 ```bash
-# 5. Start the server
 node index.js
 ```
-
-Server will run on `http://localhost:5000`
-
----
-
-## 🔐 Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| `PORT` | Port number for the server (default: 5000) |
-| `MONGODB_URI` | MongoDB Atlas connection string |
-| `JWT_SECRET` | Secret key for signing JWT tokens |
-
-> ⚠️ Never commit your `.env` file. It is listed in `.gitignore`.
 
 ---
 
@@ -152,16 +151,16 @@ Server will run on `http://localhost:5000`
 | 3 | Auth routes (register + login) | 🔄 In Progress |
 | 4 | Product APIs | ⏳ Pending |
 | 5 | Dashboard API | ⏳ Pending |
-| 6 | Deploy on Render | ⏳ Pending |
+| 6 | Deploy backend on Render | ⏳ Pending |
 
 ---
 
 ## 👩‍💻 Developer
 
 **Surbhi** — B.Tech CSE, 1st Year  
-Lingaya's Vidyapeeth, Faridabad  
+
 GitHub: [@surbhii-thisside](https://github.com/surbhii-thisside)
 
 ---
 
-*Built with 💚 as a real-world backend learning project.*
+*Built with 💚 — a real-world full stack project.*
