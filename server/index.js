@@ -20,6 +20,9 @@ mongoose.connect(process.env.MONGODB_URI)
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
+const productRoutes = require('./routes/product');
+app.use('/api/product', productRoutes);
+
 // Test route
 app.get('/', (req, res) => {
   res.json({ message: 'Cartico Backend is running! 🚀' });
