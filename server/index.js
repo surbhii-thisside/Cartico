@@ -1,4 +1,5 @@
 // Step 2 complete: MongoDB Atlas connected ✅
+// Step 4 complete: Product API connected to Open Food Facts ✅
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
