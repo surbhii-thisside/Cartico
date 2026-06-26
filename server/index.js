@@ -21,8 +21,14 @@ mongoose.connect(process.env.MONGODB_URI)
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
+const compareRoutes = require('./routes/compare');
+app.use('/api/product/compare', compareRoutes);
+
 const productRoutes = require('./routes/product');
 app.use('/api/product', productRoutes);
+
+const dashboardRoutes = require('./routes/dashboard');
+app.use('/api/dashboard', dashboardRoutes);
 
 // Test route
 app.get('/', (req, res) => {
@@ -33,3 +39,4 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ Cartico server running on http://localhost:${PORT}`);
 });
+
