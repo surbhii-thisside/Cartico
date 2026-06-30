@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Lock, User, Eye, EyeOff, Bot, Check, ArrowRight } from "lucide-react";
+import API from "../api";
 import "../auth.css";
 
 // eslint-disable-next-line react/prop-types
 export default function AuthPage({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
   const [showPwd, setShowPwd] = useState(false);
-  
-  // Signup State
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  // Form State
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,14 +22,47 @@ export default function AuthPage({ onLogin }) {
   const hasUpper = /[A-Z]/.test(password);
   const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
+
     if (!isLogin && password !== confirmPassword) {
-      // Just console log for now so it doesn't block the user from testing the flow
-      console.log("Passwords do not match, but proceeding for demo");
+      setErrorMsg("Passwords do not match");
+      return;
     }
-    // Simulate auth action
-    onLogin();
+
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        // LOGIN
+        const res = await API.post('/api/auth/login', { email, password });
+        const { token, user } = res.data;
+
+        localStorage.setItem('token', token);
+        localStorage.setItem('userId', user.id);
+        localStorage.setItem('userName', user.name);
+
+        onLogin(user);
+      } else {
+        // REGISTER
+        await API.post('/api/auth/register', { name, email, password });
+
+        // Auto-login after successful registration
+        const res = await API.post('/api/auth/login', { email, password });
+        const { token, user } = res.data;
+
+        localStorage.setItem('token', token);
+        localStorage.setItem('userId', user.id);
+        localStorage.setItem('userName', user.name);
+
+        onLogin(user);
+      }
+    } catch (err) {
+      setErrorMsg(err.response?.data?.error || "Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formVariants = {
@@ -82,17 +118,35 @@ export default function AuthPage({ onLogin }) {
           <div className="auth-switch">
              <button 
                className={`auth-switch-btn ${isLogin ? 'active' : ''}`}
-               onClick={() => setIsLogin(true)}
+               onClick={() => { setIsLogin(true); setErrorMsg(""); }}
              >
                Login
              </button>
              <button 
                className={`auth-switch-btn ${!isLogin ? 'active' : ''}`}
-               onClick={() => setIsLogin(false)}
+               onClick={() => { setIsLogin(false); setErrorMsg(""); }}
              >
                Sign Up
              </button>
           </div>
+
+          {errorMsg && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{
+                background: "rgba(255,79,109,0.1)",
+                border: "1px solid rgba(255,79,109,0.3)",
+                color: "#ff7a92",
+                padding: "10px 14px",
+                borderRadius: 10,
+                fontSize: 13,
+                marginBottom: 16,
+              }}
+            >
+              {errorMsg}
+            </motion.div>
+          )}
 
           <form onSubmit={handleSubmit}>
             <AnimatePresence mode="wait">
@@ -125,8 +179,8 @@ export default function AuthPage({ onLogin }) {
 
                    <div className="auth-sub-link">Forgot Password?</div>
 
-                   <button type="submit" className="auth-submit">
-                     Login <ArrowRight size={16} style={{ marginLeft: 8, verticalAlign: 'text-bottom' }}/>
+                   <button type="submit" className="auth-submit" disabled={loading}>
+                     {loading ? "Logging in..." : "Login"} <ArrowRight size={16} style={{ marginLeft: 8, verticalAlign: 'text-bottom' }}/>
                    </button>
                 </motion.div>
               ) : (
@@ -191,33 +245,13 @@ export default function AuthPage({ onLogin }) {
                      </div>
                    </div>
 
-                   <button type="submit" className="auth-submit">
-                     Create Account <ArrowRight size={16} style={{ marginLeft: 8, verticalAlign: 'text-bottom' }}/>
+                   <button type="submit" className="auth-submit" disabled={loading}>
+                     {loading ? "Creating account..." : "Create Account"} <ArrowRight size={16} style={{ marginLeft: 8, verticalAlign: 'text-bottom' }}/>
                    </button>
-                </motion.div>
-              )}
+                </motion.div>   
+              )}     
             </AnimatePresence>
           </form>
-
-          {/* Social Logins */}
-          <div className="auth-divider">
-            <span>Or continue with</span>
-          </div>
-
-          <div className="auth-social">
-            {/* Apple Icon */}
-            <div className="social-btn" onClick={onLogin}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.82 2.76c.86-.92 1.4-2.22 1.25-3.52-1.12.06-2.52.79-3.41 1.74-.78.8-1.4 2.14-1.22 3.42 1.26.11 2.53-.74 3.38-1.64zm7.25 15.13c-.2.53-1.65 3.32-3.86 3.32-.98 0-1.52-.36-2.9-.36-1.4 0-2.02.38-2.92.38-2.18 0-3.69-2.78-3.9-3.32C3.87 11.23 6.36 7.42 8.71 7.42c1.23 0 1.95.53 2.76.53.84 0 1.76-.58 3.14-.58 2.07 0 3.23.95 3.86 1.72-2.92 1.58-2.4 5.25.6 6.8z"/></svg>
-            </div>
-            {/* Google Icon */}
-            <div className="social-btn" onClick={onLogin}>
-               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21.35 11.1h-9.17v2.73h6.51c-.33 3.81-3.5 5.44-6.5 5.44-3.82 0-6.92-3.1-6.92-6.92 0-3.83 3.1-6.93 6.92-6.93 1.92 0 3.52.72 4.7 1.8l2.03-2.03C17.26 3.54 14.85 2.5 12.18 2.5 6.83 2.5 2.5 6.83 2.5 12.18c0 5.34 4.33 9.68 9.68 9.68 6.07 0 9.77-4.28 9.77-9.87 0-.7-.09-1.25-.6-1.89z"/></svg>
-            </div>
-            {/* Github Icon */}
-            <div className="social-btn" onClick={onLogin}>
-               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.7-1.3-1.7-1-.6.1-.6.1-.6 1.2.1 1.8 1.2 1.8 1.2 1 1.7 2.6 1.2 3.3.9.1-.7.4-1.2.7-1.5-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.2-3.3-.1-.3-.6-1.5.1-3.2 0 0 1-.3 3.3 1.2 1-.3 2-.4 3-.4s2 .1 3 .4c2.2-1.5 3.2-1.2 3.2-1.2.7 1.7.2 2.9.1 3.2.8.9 1.2 2 1.2 3.3 0 4.6-2.8 5.6-5.4 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0012 .3z"/></svg>
-            </div>
-          </div>
 
         </div>
 

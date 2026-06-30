@@ -712,6 +712,34 @@ function ComingSoon({ name }) {
 export default function App() {
   const [activeTab, setActiveTab] = useState('Home');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  // Check if user is already logged in (on page load/refresh)
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
+
+    if (token && userId) {
+      setIsLoggedIn(true);
+      setCurrentUser({ id: userId, name: userName });
+    }
+  }, []);
+
+  const handleLogin = (user) => {
+    setIsLoggedIn(true);
+    setCurrentUser(user);
+    setActiveTab('Home');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    setIsLoggedIn(false);
+    setCurrentUser(null);
+    setActiveTab('Home');
+  };
 
   // Custom cursor
   useEffect(() => {
@@ -787,7 +815,7 @@ export default function App() {
 
           {activeTab === 'Auth' && (
             <motion.div key="auth" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-              <AuthPage onLogin={() => { setIsLoggedIn(true); setActiveTab('Home'); }} />
+              <AuthPage onLogin={handleLogin} />
             </motion.div>
           )}
         </AnimatePresence>
