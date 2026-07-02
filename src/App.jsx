@@ -60,7 +60,7 @@ const SLIDES = [
 ];
 
 /* ─────────────────────────────────────────────────────────────
-   PAGE TRANSITION — blur out / slide lock
+   PAGE TRANSITION
 ───────────────────────────────────────────────────────────── */
 const pageVariants = {
   initial: { opacity: 0, filter: "blur(16px)", x: 40, scale: 0.97 },
@@ -75,9 +75,7 @@ const pageVariants = {
 };
 
 /* ─────────────────────────────────────────────────────────────
-   MIST REVEAL — "Born of Nature" scroll component
-   Uses native IntersectionObserver + useAnimation for reliability
-   blur(22px)→0, scale(0.82)→1, opacity(0)→1, y(28)→0
+   MIST REVEAL
 ───────────────────────────────────────────────────────────── */
 function MistReveal({ children, delay = 0, className = '', style = {}, as = 'div' }) {
   const ref = useRef(null);
@@ -86,55 +84,40 @@ function MistReveal({ children, delay = 0, className = '', style = {}, as = 'div
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           controls.start({
-            opacity: 1,
-            filter: 'blur(0px)',
-            scale: 1,
-            y: 0,
-            transition: {
-              duration: 0.92,
-              delay,
-              ease: [0.16, 1, 0.3, 1],
-            },
+            opacity: 1, filter: 'blur(0px)', scale: 1, y: 0,
+            transition: { duration: 0.92, delay, ease: [0.16, 1, 0.3, 1] },
           });
-          observer.unobserve(el); // once only
+          observer.unobserve(el);
         }
       },
       { threshold: 0.06, rootMargin: '0px 0px -40px 0px' }
     );
-
     observer.observe(el);
     return () => observer.disconnect();
   }, [controls, delay]);
 
   const Tag = as === 'h2' ? motion.h2 : as === 'p' ? motion.p : motion.div;
-
   return (
-    <Tag
-      ref={ref}
-      className={className}
-      style={style}
+    <Tag ref={ref} className={className} style={style}
       initial={{ opacity: 0, filter: 'blur(22px)', scale: 0.82, y: 28 }}
-      animate={controls}
-    >
+      animate={controls}>
       {children}
     </Tag>
   );
 }
 
 /* ─────────────────────────────────────────────────────────────
-   MARKETING BG (Home only)
+   MARKETING BG
 ───────────────────────────────────────────────────────────── */
 function MarketingBg() {
   const bgRef = useRef(null);
   useEffect(() => {
     const bg = bgRef.current;
     if (!bg) return;
-
     function buildEl(p) {
       let el;
       if (p.t === 'bar') {
@@ -157,20 +140,18 @@ function MarketingBg() {
       }
       return el;
     }
-
     for (let i = 0; i < 70; i++) {
       const wrap = document.createElement('div');
       wrap.className = 'mkt-item';
       const p = MKT_ITEMS[i % MKT_ITEMS.length];
       wrap.appendChild(buildEl(p));
-      const x   = Math.random() * 97;
-      const dur  = 12 + Math.random() * 16;
+      const x = Math.random() * 97;
+      const dur = 12 + Math.random() * 16;
       const delay = -(Math.random() * dur);
       wrap.style.cssText = `left:${x}%;bottom:-100px;animation:floatUp ${dur}s ${delay}s linear infinite;`;
       bg.appendChild(wrap);
     }
   }, []);
-
   return <div id="mkt-bg" ref={bgRef} />;
 }
 
@@ -356,9 +337,9 @@ function ResultSlider() {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   NAVBAR — Orbitron, gap: 4rem spread
+   NAVBAR
 ───────────────────────────────────────────────────────────── */
-function Navbar({ activeTab, setActiveTab, isLoggedIn }) {
+function Navbar({ activeTab, setActiveTab, isLoggedIn, currentUser, onLogout }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleNavClick = (tab) => {
@@ -366,66 +347,55 @@ function Navbar({ activeTab, setActiveTab, isLoggedIn }) {
     setIsMobileMenuOpen(false);
   };
 
+  const userInitial = currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'C';
+
   return (
     <nav>
-      {/* 1. Left Section: Logo */}
       <div className="nav-section nav-left">
         <div className="logo" onClick={() => handleNavClick('Home')} style={{ cursor: 'pointer' }}>Cartico</div>
       </div>
 
-      {/* Mobile Toggle (only shows on mobile via CSS) */}
       <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
         {isMobileMenuOpen ? <X size={24} color="#fff" /> : <Menu size={24} color="#fff" />}
       </button>
 
-      {/* 2. Center Section: Links (Desktop) / Full Overlay (Mobile) */}
       <div className={`nav-menu ${isMobileMenuOpen ? 'open' : ''}`}>
         <div className="nav-links">
           {['Home', 'Scanner', 'Results', 'Compare', 'Dashboard'].map(tab => (
-            <a
-              key={tab}
-              className={`nav-link${activeTab === tab ? ' active' : ''}`}
-              onClick={() => handleNavClick(tab)}
-            >
+            <a key={tab} className={`nav-link${activeTab === tab ? ' active' : ''}`}
+              onClick={() => handleNavClick(tab)}>
               {tab}
             </a>
           ))}
         </div>
-        
-        {/* Actions inside nav-menu for mobile fallback */}
         <div className="nav-actions-mobile">
           {!isLoggedIn ? (
             <button className="nav-cta" onClick={() => handleNavClick('Auth')}>Login / Join</button>
           ) : (
             <div style={{ display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'center' }}>
               <button className="nav-cta" onClick={() => handleNavClick('Scanner')}>⊡ Scan Now</button>
-              <div 
-                className="nav-avatar" 
+              <div className="nav-avatar"
                 onClick={() => handleNavClick('Dashboard')}
-                style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, var(--green), var(--blue))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)' }}
-              >
-                C
+                style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, var(--green), var(--blue))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.1)' }}>
+                {userInitial}
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* 3. Right Section: Actions (Desktop) */}
       <div className="nav-section nav-right">
         {!isLoggedIn ? (
           <button className="nav-cta" onClick={() => handleNavClick('Auth')}>Login / Join</button>
         ) : (
           <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexShrink: 0 }}>
             <button className="nav-cta" onClick={() => handleNavClick('Scanner')}>⊡ Scan Now</button>
-            <div 
-              className="nav-avatar" 
+            <div className="nav-avatar"
               onClick={() => handleNavClick('Dashboard')}
               style={{ width: 38, height: 38, borderRadius: '50%', background: 'linear-gradient(135deg, var(--green), var(--blue))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: '#000', cursor: 'pointer', border: '2px solid rgba(255,255,255,0.1)', transition: 'transform 0.2s', boxShadow: '0 4px 12px rgba(0,255,170,0.2)' }}
               onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              C
+              onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+              {userInitial}
             </div>
           </div>
         )}
@@ -435,51 +405,38 @@ function Navbar({ activeTab, setActiveTab, isLoggedIn }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   HOME — Born of Nature scroll experience
-   Each section wrapped in <MistReveal> for guaranteed blur→clear
+   HOME
 ───────────────────────────────────────────────────────────── */
 function Home({ setActiveTab }) {
   const [scanMode, setScanMode] = useState('QR Code');
 
   return (
     <>
-      {/* ── HERO (on-load animations, no scroll needed) ── */}
       <div className="hero">
         <div className="hero-left">
-          <motion.div
-            className="hero-badge"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <motion.div className="hero-badge"
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
             <span className="pulse" /> AI-Powered Product Intelligence
           </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, filter: 'blur(18px)', y: 30, scale: 0.92 }}
             animate={{ opacity: 1, filter: 'blur(0px)', y: 0, scale: 1 }}
-            transition={{ duration: 1.0, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
-          >
+            transition={{ duration: 1.0, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}>
             Brands Have<br /><span className="g">Secrets,</span><br />Cartico Has<br />Answers
           </motion.h1>
-
-          <motion.div
-            className="hero-btns"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <motion.div className="hero-btns"
+            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}>
             <button className="btn-main" onClick={() => setActiveTab('Scanner')}>⊡ Start Scanning →</button>
             <button className="btn-ghost">See How It Works</button>
           </motion.div>
         </div>
 
-        <motion.div
-          className="hero-right"
+        <motion.div className="hero-right"
           initial={{ opacity: 0, filter: 'blur(22px)', x: 50, scale: 0.90 }}
           animate={{ opacity: 1, filter: 'blur(0px)', x: 0, scale: 1 }}
-          transition={{ duration: 1.1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        >
+          transition={{ duration: 1.1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}>
           <div className="scanner-glass">
             <div className="scan-frame">
               <div className="sc tl"/><div className="sc tr"/>
@@ -502,12 +459,6 @@ function Home({ setActiveTab }) {
         </motion.div>
       </div>
 
-      {/* ══════════════════════════════════════════════════════
-          SCROLL SECTIONS — all wrapped in MistReveal
-          blur(22px)→0, scale(0.82)→1, opacity(0)→1
-      ══════════════════════════════════════════════════════ */}
-
-      {/* ── Section 1: See Cartico in Action ── */}
       <MistReveal className="section">
         <div className="sh">
           <MistReveal as="div" delay={0.06}><div className="stag">Real Scan Results</div></MistReveal>
@@ -516,21 +467,18 @@ function Home({ setActiveTab }) {
         </div>
         <div className="tilt-grid">
           {PRODUCTS.map((p, i) => (
-            <MistReveal key={i} delay={i * 0.06}>
-              <TiltCard p={p} />
-            </MistReveal>
+            <MistReveal key={i} delay={i * 0.06}><TiltCard p={p} /></MistReveal>
           ))}
         </div>
       </MistReveal>
 
-      {/* ── Section 2: Counters ── */}
       <div className="counters-section">
         <div className="counter-grid">
           {[
             {label:'Products Scanned',target:12,suffix:'+',icon:'📱'},
             {label:'Frauds Detected',target:3,suffix:'+',icon:'🚨'},
             {label:'Money Saved',target:450,prefix:'₹',suffix:'+',icon:'💰'},
-            {label:'Cities Active',target:2,suffix:'+',icon:'🏙️', sublabel:'(Faridabad & Delhi)'},
+            {label:'Cities Active',target:2,suffix:'+',icon:'🏙️',sublabel:'(Faridabad & Delhi)'},
           ].map((c, i) => (
             <MistReveal key={c.label} delay={i * 0.10}>
               <div className="counter-card">
@@ -544,7 +492,6 @@ function Home({ setActiveTab }) {
         </div>
       </div>
 
-      {/* ── Section 3: How Cartico Works ── */}
       <MistReveal className="section">
         <div className="sh">
           <MistReveal delay={0.06}><div className="stag">Simple Process</div></MistReveal>
@@ -571,7 +518,6 @@ function Home({ setActiveTab }) {
         </div>
       </MistReveal>
 
-      {/* ── Section 4: Flip Cards ── */}
       <MistReveal className="section">
         <div className="sh">
           <MistReveal delay={0.06}><div className="stag">What We Reveal</div></MistReveal>
@@ -580,14 +526,11 @@ function Home({ setActiveTab }) {
         </div>
         <div className="feat-grid">
           {FLIP_CARDS.map((card, i) => (
-            <MistReveal key={i} delay={i * 0.08}>
-              <FlipCard card={card} />
-            </MistReveal>
+            <MistReveal key={i} delay={i * 0.08}><FlipCard card={card} /></MistReveal>
           ))}
         </div>
       </MistReveal>
 
-      {/* ── Section 5: Result Slider ── */}
       <MistReveal className="section">
         <div className="sh">
           <MistReveal delay={0.06}><div className="stag">Live Preview</div></MistReveal>
@@ -606,120 +549,19 @@ function Home({ setActiveTab }) {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   COMING SOON — per-page themed
-───────────────────────────────────────────────────────────── */
-function ComingSoon({ name }) {
-  const isCompare   = name === 'Compare';
-  const isDashboard = name === 'Dashboard';
-
-  const accentColor    = isCompare ? '#6eb3ff' : isDashboard ? '#fbbf24' : '#00ffaa';
-  const accentColorSub = isCompare ? '#10b981'  : isDashboard ? '#f97316' : '#4d9fff';
-  const icon = isCompare ? '⚖️' : isDashboard ? '📊' : '🚧';
-
-  const features = isCompare
-    ? ['Side-by-side product comparison', 'Price & health score matrix', 'AI winner recommendation', 'Ingredient diff viewer']
-    : isDashboard
-    ? ['Scan history & trends', 'Money saved over time', 'Health score analytics', 'Fraud detection report']
-    : [];
-
-  return (
-    <div className={`coming-soon ${isCompare ? 'page-compare' : isDashboard ? 'page-dashboard' : ''}`}>
-      {isCompare && <div className="compare-lines" />}
-
-      <motion.div
-        style={{ fontSize: 72, filter: `drop-shadow(0 0 40px ${accentColor}55)` }}
-        animate={{ scale: [1, 1.06, 1], rotate: [0, 2, -2, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        {icon}
-      </motion.div>
-
-      <motion.h2
-        style={{
-          fontFamily: 'Orbitron, sans-serif', fontSize: 28, fontWeight: 700,
-          letterSpacing: '0.15rem', textAlign: 'center',
-          background: `linear-gradient(135deg, ${accentColor}, ${accentColorSub})`,
-          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-        }}
-        initial={{ opacity: 0, filter: 'blur(14px)', y: 20 }}
-        animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-        transition={{ duration: 0.8, delay: 0.1 }}
-      >
-        {name}
-      </motion.h2>
-
-      <motion.p
-        style={{ color: 'rgba(255,255,255,0.4)', fontSize: 15, textAlign: 'center', fontFamily: 'Plus Jakarta Sans, sans-serif' }}
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.25 }}
-      >
-        Coming in the next build — stay tuned!
-      </motion.p>
-
-      {features.length > 0 && (
-        <motion.div
-          style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8, maxWidth: 360, width: '100%' }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.35 }}
-        >
-          {features.map((f, i) => (
-            <motion.div
-              key={f}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                background: 'rgba(255,255,255,0.04)',
-                border: `1px solid ${accentColor}22`,
-                borderRadius: 12, padding: '10px 16px',
-                fontSize: 13, color: 'rgba(255,255,255,0.55)',
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
-              }}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 + i * 0.07 }}
-            >
-              <span style={{ color: accentColor, fontSize: 16 }}>◆</span> {f}
-            </motion.div>
-          ))}
-        </motion.div>
-      )}
-
-      <motion.span
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8,
-          padding: '8px 20px', borderRadius: 30, fontSize: 12, fontWeight: 600,
-          fontFamily: 'Plus Jakarta Sans, sans-serif', letterSpacing: '0.05rem',
-          border: `1px solid ${accentColor}44`,
-          background: `${accentColor}11`,
-          color: accentColor,
-          marginTop: 8,
-        }}
-        initial={{ opacity: 0, scale: 0.85 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
-      >
-        <span style={{ color: accentColor }}>●</span>
-        {isCompare ? 'Sapphire · Forest Edition' : isDashboard ? 'Carbon · Amber Edition' : ''}
-      </motion.span>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   ROOT APP — AnimatePresence blur-slide page transitions
+   ROOT APP
 ───────────────────────────────────────────────────────────── */
 export default function App() {
   const [activeTab, setActiveTab] = useState('Home');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [scannedProduct, setScannedProduct] = useState(null);
 
-  // Check if user is already logged in (on page load/refresh)
+  // Check localStorage on load
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
     const userName = localStorage.getItem('userName');
-
     if (token && userId) {
       setIsLoggedIn(true);
       setCurrentUser({ id: userId, name: userName });
@@ -739,6 +581,11 @@ export default function App() {
     setIsLoggedIn(false);
     setCurrentUser(null);
     setActiveTab('Home');
+  };
+
+  const handleProductScanned = (product) => {
+    setScannedProduct(product);
+    setActiveTab('Results');
   };
 
   // Custom cursor
@@ -764,9 +611,14 @@ export default function App() {
       <div id="cursor-trail" />
 
       <div className="content">
-        <Navbar activeTab={activeTab} setActiveTab={setActiveTab} isLoggedIn={isLoggedIn} />
+        <Navbar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isLoggedIn={isLoggedIn}
+          currentUser={currentUser}
+          onLogout={handleLogout}
+        />
 
-        {/* Global Backgrounds wrapper — decoupled from page transitions so position: fixed works */}
         <div style={{ position: 'fixed', inset: 0, zIndex: -1, pointerEvents: 'none' }}>
           <AnimatePresence>
             {activeTab === 'Home' && (
@@ -791,25 +643,48 @@ export default function App() {
 
           {activeTab === 'Scanner' && (
             <motion.div key="scanner" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-              <ScannerPage onBack={() => setActiveTab('Home')} />
+              {isLoggedIn ? (
+                <ScannerPage
+                  onBack={() => setActiveTab('Home')}
+                  currentUser={currentUser}
+                  onProductScanned={handleProductScanned}
+                />
+              ) : (
+                <AuthPage onLogin={handleLogin} />
+              )}
             </motion.div>
           )}
 
           {activeTab === 'Results' && (
             <motion.div key="results" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-              <ProductAnalysisPage onBack={() => setActiveTab('Home')} />
+              <ProductAnalysisPage
+                onBack={() => setActiveTab('Home')}
+                product={scannedProduct}
+              />
             </motion.div>
           )}
 
           {activeTab === 'Compare' && (
             <motion.div key="compare" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-              <ComparePage onBack={() => setActiveTab('Home')} />
+              {isLoggedIn ? (
+                <ComparePage onBack={() => setActiveTab('Home')} />
+              ) : (
+                <AuthPage onLogin={handleLogin} />
+              )}
             </motion.div>
           )}
 
           {activeTab === 'Dashboard' && (
             <motion.div key="dashboard" variants={pageVariants} initial="initial" animate="animate" exit="exit">
-              <DashboardPage onBack={() => setActiveTab('Home')} />
+              {isLoggedIn ? (
+                <DashboardPage
+                  onBack={() => setActiveTab('Home')}
+                  currentUser={currentUser}
+                  onLogout={handleLogout}
+                />
+              ) : (
+                <AuthPage onLogin={handleLogin} />
+              )}
             </motion.div>
           )}
 
