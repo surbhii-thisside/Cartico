@@ -259,4 +259,3 @@ export default function AuthPage({ onLogin }) {
     </div>
   );
 }
-//completed 
