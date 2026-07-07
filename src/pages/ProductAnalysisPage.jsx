@@ -112,17 +112,28 @@ export default function ProductAnalysisPage({ onBack, product }) {
 
           {/* ── INGREDIENTS (real data, raw text) ── */}
           {product.ingredients && product.ingredients !== "Not available" && (
-            <motion.div variants={slideUp}>
-              <div className="ap-label lbl-am" style={{ marginBottom: 10 }}>
-                <FlaskConical size={13} strokeWidth={2.5} /> Ingredients
-              </div>
-              <motion.div className="ap-card" whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>
-                  {product.ingredients}
-                </p>
-              </motion.div>
-            </motion.div>
-          )}
+  <motion.div variants={slideUp}>
+    <div className="ap-label lbl-am" style={{ marginBottom: 10 }}>
+      <FlaskConical size={13} strokeWidth={2.5} /> Ingredients
+    </div>
+    <motion.div className="ap-card" whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+      <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>
+        {product.ingredients}
+      </p>
+      {product.ingredientsTranslated && (
+        <>
+          <div style={{ height: 1, background: "rgba(255,255,255,0.08)", margin: "12px 0" }} />
+          <p style={{ fontSize: 10, color: "#7ab8ff", fontWeight: 700, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>
+            English Translation
+          </p>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
+            {product.ingredientsTranslated}
+          </p>
+        </>
+      )}
+    </motion.div>
+  </motion.div>
+)}
 
           {/* ── NOT-YET-BUILT FEATURES ── */}
           <ComingSoon icon={AlertCircle} label="Fake Price Detector"
