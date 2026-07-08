@@ -40,4 +40,3 @@ app.listen(PORT, () => {
   console.log(`✅ Cartico server running on http://localhost:${PORT}`);
 });
 
-//remaining 
