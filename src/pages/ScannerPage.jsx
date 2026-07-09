@@ -210,6 +210,17 @@ export default function ScannerPage({ onBack, onProductScanned }) {
     setLoading(true);
     try {
       const res = await API.get(`/api/product/${barcode}`);
+
+      // Save this scan to history (fire-and-forget — don't block navigation if it fails)
+      const userId = localStorage.getItem("userId");
+      if (userId) {
+        API.post("/api/dashboard/scan", {
+          userId,
+          barcode,
+          productName: res.data.name,
+        }).catch(() => {}); // silently ignore save errors, not critical to user flow
+      }
+
       onProductScanned(res.data);
     } catch (err) {
       if (err.response && err.response.status === 404) {
