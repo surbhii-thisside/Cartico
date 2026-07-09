@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft, Zap, Sparkles, AlertCircle, FlaskConical,
   TrendingDown, Users, BadgeCheck, ScanSearch,
 } from "lucide-react";
 import "../analysis.css";
+import API from "../api";
 
 const container = { hidden: {}, visible: { transition: { staggerChildren: 0.1 } } };
 const slideUp = {
@@ -58,6 +59,16 @@ function EmptyState({ onBack }) {
 // MAIN PAGE
 // ─────────────────────────────────────────────────────────────────────────────
 export default function ProductAnalysisPage({ onBack, product }) {
+  const [scanHistory, setScanHistory] = useState([]);
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    if (!userId) return;
+    API.get(`/api/dashboard/${userId}`)
+      .then((res) => setScanHistory(res.data.history || []))
+      .catch(() => setScanHistory([]));
+  }, [product]); // refetch each time a new product is scanned
+
   if (!product) return <EmptyState onBack={onBack} />;
 
   const gradeColor = {
@@ -110,30 +121,30 @@ export default function ProductAnalysisPage({ onBack, product }) {
             </div>
           </motion.div>
 
-          {/* ── INGREDIENTS (real data, raw text) ── */}
+          {/* ── INGREDIENTS (real data, with translation fallback) ── */}
           {product.ingredients && product.ingredients !== "Not available" && (
-  <motion.div variants={slideUp}>
-    <div className="ap-label lbl-am" style={{ marginBottom: 10 }}>
-      <FlaskConical size={13} strokeWidth={2.5} /> Ingredients
-    </div>
-    <motion.div className="ap-card" whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-      <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>
-        {product.ingredients}
-      </p>
-      {product.ingredientsTranslated && (
-        <>
-          <div style={{ height: 1, background: "rgba(255,255,255,0.08)", margin: "12px 0" }} />
-          <p style={{ fontSize: 10, color: "#7ab8ff", fontWeight: 700, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>
-            English Translation
-          </p>
-          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
-            {product.ingredientsTranslated}
-          </p>
-        </>
-      )}
-    </motion.div>
-  </motion.div>
-)}
+            <motion.div variants={slideUp}>
+              <div className="ap-label lbl-am" style={{ marginBottom: 10 }}>
+                <FlaskConical size={13} strokeWidth={2.5} /> Ingredients
+              </div>
+              <motion.div className="ap-card" whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>
+                  {product.ingredients}
+                </p>
+                {product.ingredientsTranslated && (
+                  <>
+                    <div style={{ height: 1, background: "rgba(255,255,255,0.08)", margin: "12px 0" }} />
+                    <p style={{ fontSize: 10, color: "#7ab8ff", fontWeight: 700, marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                      English Translation
+                    </p>
+                    <p style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", lineHeight: 1.6 }}>
+                      {product.ingredientsTranslated}
+                    </p>
+                  </>
+                )}
+              </motion.div>
+            </motion.div>
+          )}
 
           {/* ── NOT-YET-BUILT FEATURES ── */}
           <ComingSoon icon={AlertCircle} label="Fake Price Detector"
@@ -148,8 +159,33 @@ export default function ProductAnalysisPage({ onBack, product }) {
           <ComingSoon icon={Users} label="Community Reviews"
             note="Real user reviews for this product will appear here." />
 
-          <ComingSoon icon={BadgeCheck} label="Scan History"
-            note="Your past scans will show up here once connected." />
+          {/* ── SCAN HISTORY (real data) ── */}
+          <motion.div variants={slideUp}>
+            <div className="ap-label lbl-em" style={{ marginBottom: 14 }}>
+              <BadgeCheck size={13} strokeWidth={2.5} /> Scan History
+            </div>
+            {scanHistory.length === 0 ? (
+              <motion.div className="ap-card" style={{ textAlign: "center", padding: "24px 16px", opacity: 0.6 }}>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>
+                  No scans yet — start scanning to build your history!
+                </p>
+              </motion.div>
+            ) : (
+              <div className="ap-hist-list">
+                {scanHistory.map((item) => (
+                  <motion.div key={item._id} className="ap-hist-card" whileHover={{ x: 4 }} transition={{ duration: 0.2 }}>
+                    <div className="ap-hist-emoji">📦</div>
+                    <div className="ap-hist-info">
+                      <p className="ap-hist-name">{item.productName}</p>
+                      <div className="ap-hist-meta">
+                        Barcode: {item.barcode}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </motion.div>
 
           {/* ── CTA ── */}
           <motion.div variants={slideUp}>
