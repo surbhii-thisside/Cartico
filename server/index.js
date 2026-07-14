@@ -30,6 +30,8 @@ app.use('/api/product', productRoutes);
 const dashboardRoutes = require('./routes/dashboard');
 app.use('/api/dashboard', dashboardRoutes);
 
+const healthScoreRoutes = require('./routes/healthScore');
+app.use('/api/health-score', healthScoreRoutes);
 // Test route
 app.get('/', (req, res) => {
   res.json({ message: 'Cartico Backend is running! 🚀' });
